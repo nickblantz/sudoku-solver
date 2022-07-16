@@ -1,0 +1,29 @@
+Total backtracks: 356
+Time-to-solve: 0.0012403 seconds
+
+Total backtracks: 1082
+Time-to-solve: 0.0049449 seconds
+
+Total backtracks: 57267
+Time-to-solve: 0.1344959 seconds
+
+Total backtracks: 714315
+Time-to-solve: 1.5824231 seconds
+
+Total backtracks: 382
+Time-to-solve: 0.0010473 seconds
+
+Total backtracks: 479
+Time-to-solve: 0.0059913 seconds
+
+Total backtracks: 107
+Time-to-solve: 0.0003345 seconds
+
+Total backtracks: 121480
+Time-to-solve: 0.2689836 seconds
+
+Total backtracks: 49558
+Time-to-solve: 0.112434 seconds
+
+Total backtracks: 69175316
+Time-to-solve: 151.6002033 seconds
