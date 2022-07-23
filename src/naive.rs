@@ -5,9 +5,9 @@ const BOARD_LEN: usize = 81;
 const SECTION_LEN: usize = BOARD_LEN / 9;
 const SECTION_OPTIONS: [i8; SECTION_LEN] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-pub struct SodukoSolver([i8; BOARD_LEN]);
+pub struct SudokuSolver([i8; BOARD_LEN], pub usize);
 
-impl SodukoSolver {
+impl SudokuSolver {
     pub fn try_new(raw: &String) -> Result<Self, SolverError> {
         if raw.len() != BOARD_LEN {
             return Err(SolverError::InvalidLength);
@@ -22,10 +22,11 @@ impl SodukoSolver {
             }
         }
 
-        Ok(Self(board))
+        Ok(Self(board, 0))
     }
 
     pub fn solve(&self) -> Result<Self, SolverError> {
+        let mut backtracks = 0;
         let mut board = self.0.clone();
         let mut attempts = [usize::default(); BOARD_LEN];
         let mut i = 0;
@@ -50,7 +51,10 @@ impl SodukoSolver {
                 }
 
                 let prev_i = match attempt_stack.pop() {
-                    Some(x) => x,
+                    Some(x) => {
+                        backtracks += 1;
+                        x
+                    }
                     None => {
                         return Err(SolverError::InternalError(
                             "Solution Backtracking Stack is Empty",
@@ -65,7 +69,7 @@ impl SodukoSolver {
                 i += 1;
             }
         }
-        Ok(Self(board))
+        Ok(Self(board, backtracks))
     }
 
     fn get_row(board: &[i8; BOARD_LEN], i: usize) -> [i8; SECTION_LEN] {
@@ -159,12 +163,21 @@ impl SodukoSolver {
     }
 }
 
-impl fmt::Display for SodukoSolver {
+impl fmt::Display for SudokuSolver {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> std::result::Result<(), fmt::Error> {
         for (i, n) in self.0.iter().enumerate() {
             write!(f, "{} ", Self::magic_displayer(n))?;
-            if i % 9 == 8 {
-                write!(f, "\n")?;
+
+            if (i + 1) % 3 == 0 {
+                write!(f, "  ")?;
+            }
+
+            if (i + 1) % 9 == 0 {
+                writeln!(f)?;
+            }
+
+            if (i + 1) % 27 == 0 {
+                writeln!(f)?;
             }
         }
         Ok(())
@@ -182,7 +195,7 @@ impl fmt::Display for SolverError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> std::result::Result<(), fmt::Error> {
         match self {
             Self::InternalError(s) => write!(f, "Internal Solver Error: {}", s)?,
-            Self::InvalidLength => write!(f, "Soduko puzzle is incorrect length")?,
+            Self::InvalidLength => write!(f, "Sudoku puzzle is incorrect length")?,
             Self::ParserError(c) => write!(f, "Could not parse character {}", c)?,
         }
         Ok(())
